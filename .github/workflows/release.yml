@@ -1,0 +1,34 @@
+name: Build & Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build exe
+        run: |
+          csc /out:HS-Firestone-Launcher.exe Program.cs /reference:System.Management.dll
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: launcher
+          path: HS-Firestone-Launcher.exe
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: launcher
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: ${{ github.ref_name }}
+          files: HS-Firestone-Launcher.exe
