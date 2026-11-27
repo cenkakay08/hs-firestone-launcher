@@ -119,8 +119,7 @@ namespace HsFirestoneLauncher.Tests
         {
             const string expectedTitle = "HS-Firestone Launcher";
             foreach (var (code, s) in Languages.All)
-                Assert.Equal(expectedTitle, s.Title,
-                    ignoreCase: false, message: $"[{code}] Title mismatch");
+                Assert.True(s.Title == expectedTitle, $"[{code}] Title mismatch: expected '{expectedTitle}', got '{s.Title}'");
         }
     }
 }
