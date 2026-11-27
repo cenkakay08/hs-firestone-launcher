@@ -33,4 +33,5 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_URL: ${{ github.event.pull_request.html_url }}
-        run: gh pr review "$PR_URL" --approve --body "Auto-approved: unit tests passed and author is @cenkakay08."
+        run: |
+          gh pr review "$PR_URL" --approve --body "Auto-approved: unit tests passed and author is @cenkakay08."
