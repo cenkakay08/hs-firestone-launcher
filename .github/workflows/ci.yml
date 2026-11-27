@@ -98,5 +98,5 @@ jobs:
             gh pr merge "$PR_URL" --merge
           fi
           if [ "$BASE_REF" = "main" ]; then
-            gh workflow run release.yml --ref main
+            gh workflow run release.yml --repo "$GITHUB_REPOSITORY" --ref main
           fi
