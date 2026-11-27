@@ -10,14 +10,26 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Build exe
+      - name: Ensure .csproj exists
         run: |
-          csc /out:HS-Firestone-Launcher.exe Program.cs /reference:System.Management.dll
+          if not exist "HsFirestoneLauncher.csproj" (
+            dotnet new console -n HsFirestoneLauncher -o . -f net6.0 --force
+          )
+          copy /Y Program.cs .
+      - name: Add System.Management reference
+        run: dotnet add package System.Management --version 7.0.0
+      - name: Build the executable
+        run: |
+          dotnet publish -c Release -r win-x64 \
+            --self-contained false \
+            -p:PublishSingleFile=true \
+            -p:IncludeNativeLibrariesForSelfExtract=true \
+            -o out
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: launcher
-          path: HS-Firestone-Launcher.exe
+          path: out/HsFirestoneLauncher.exe
 
   release:
     needs: build
@@ -31,4 +43,4 @@ jobs:
         with:
           tag_name: ${{ github.ref_name }}
           name: ${{ github.ref_name }}
-          files: HS-Firestone-Launcher.exe
+          files: HsFirestoneLauncher.exe
