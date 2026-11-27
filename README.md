@@ -9,6 +9,10 @@
 
 **HS-Firestone Launcher** is a lightweight Windows system tray utility that automatically launches **Overwolf** and **Firestone** the moment **Hearthstone** starts, and cleanly kills all Overwolf background processes the moment Hearthstone exits — no manual intervention, no leftover RAM or CPU usage.
 
+<p align="center">
+  <img src="assets/screenshot.png" alt="HS-Firestone Launcher System Tray Flyout" />
+</p>
+
 ---
 
 ## ✨ Features
