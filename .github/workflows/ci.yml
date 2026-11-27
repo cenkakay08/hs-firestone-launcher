@@ -21,9 +21,62 @@ jobs:
       - name: Run unit tests
         run: dotnet test HsFirestoneLauncher.Tests --configuration Release --logger "console;verbosity=normal"
 
+  build:
+    name: build
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Create project and copy source
+        shell: pwsh
+        run: |
+          $proj = "HsFirestoneLauncher"
+          if (-Not (Test-Path "$proj/$proj.csproj")) {
+            dotnet new winforms -n $proj -o $proj -f net8.0 --force
+          }
+          Copy-Item -Force Program.cs "$proj/Program.cs"
+          Copy-Item -Force LangData.cs "$proj/LangData.cs"
+          $csproj = "$proj/$proj.csproj"
+          $xml = [xml](Get-Content $csproj)
+          $pg = $xml.Project.PropertyGroup
+          if ($pg -is [array]) { $pg = $pg[0] }
+          $pg.TargetFramework = "net8.0-windows"
+          if (-Not $pg.UseWindowsForms) {
+            $el = $xml.CreateElement("UseWindowsForms")
+            $el.InnerText = "true"
+            $pg.AppendChild($el) | Out-Null
+          }
+          if (-Not $pg.RootNamespace) {
+            $el = $xml.CreateElement("RootNamespace")
+            $el.InnerText = "HsFirestoneLauncher"
+            $pg.AppendChild($el) | Out-Null
+          }
+          $xml.Save((Resolve-Path $csproj))
+
+      - name: Add NuGet packages
+        shell: pwsh
+        run: |
+          Set-Location HsFirestoneLauncher
+          dotnet add package System.Management --version 7.0.0
+
+      - name: Build release executable (dry-run)
+        shell: pwsh
+        run: |
+          Set-Location HsFirestoneLauncher
+          dotnet publish -c Release -r win-x64 `
+            --self-contained false `
+            -p:PublishSingleFile=true `
+            -p:IncludeNativeLibrariesForSelfExtract=true `
+            -o ../out
+
   auto-approve:
     name: auto-approve
-    needs: test
+    needs: [test, build]
     if: success() && github.event.pull_request.user.login == 'cenkakay08'
     runs-on: ubuntu-latest
     permissions:
@@ -34,4 +87,4 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_URL: ${{ github.event.pull_request.html_url }}
         run: |
-          gh pr review "$PR_URL" --approve --body "Auto-approved: unit tests passed and author is @cenkakay08."
+          gh pr review "$PR_URL" --approve --body "Auto-approved: unit tests and release build passed, and author is @cenkakay08."
