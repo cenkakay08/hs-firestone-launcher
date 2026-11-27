@@ -43,33 +43,6 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
-      - name: Create project and copy source
-        shell: pwsh
-        run: |
-          $proj = "HsFirestoneLauncher"
-          if (-Not (Test-Path "$proj/$proj.csproj")) {
-            dotnet new winforms -n $proj -o $proj -f net8.0 --force
-          }
-          Copy-Item -Force Program.cs "$proj/Program.cs"
-          Copy-Item -Force LangData.cs "$proj/LangData.cs"
-          # Patch the .csproj to ensure WinForms + correct namespace
-          $csproj = "$proj/$proj.csproj"
-          $xml = [xml](Get-Content $csproj)
-          $pg = $xml.Project.PropertyGroup
-          if ($pg -is [array]) { $pg = $pg[0] }
-          $pg.TargetFramework = "net8.0-windows"
-          if (-Not $pg.UseWindowsForms) {
-            $el = $xml.CreateElement("UseWindowsForms")
-            $el.InnerText = "true"
-            $pg.AppendChild($el) | Out-Null
-          }
-          if (-Not $pg.RootNamespace) {
-            $el = $xml.CreateElement("RootNamespace")
-            $el.InnerText = "HsFirestoneLauncher"
-            $pg.AppendChild($el) | Out-Null
-          }
-          $xml.Save((Resolve-Path $csproj))
-
       - name: Run unit tests
         shell: pwsh
         run: |
@@ -77,21 +50,8 @@ jobs:
             --configuration Release `
             --logger "console;verbosity=normal"
 
-      - name: Add NuGet packages
-        shell: pwsh
-        run: |
-          Set-Location HsFirestoneLauncher
-          dotnet add package System.Management --version 7.0.0
-
       - name: Build the executable
-        shell: pwsh
-        run: |
-          Set-Location HsFirestoneLauncher
-          dotnet publish -c Release -r win-x64 `
-            --self-contained false `
-            -p:PublishSingleFile=true `
-            -p:IncludeNativeLibrariesForSelfExtract=true `
-            -o ../out
+        run: dotnet publish HsFirestoneLauncher/HsFirestoneLauncher.csproj --configuration Release --runtime win-x64 --output out
 
       # ── Code Signing via SSL.com eSigner (runs only when secrets are configured) ─
       - name: Check signing credentials

@@ -270,20 +270,46 @@ namespace HsFirestoneLauncher
 
         private static string FindOverwolfExe()
         {
+            string? programFilesX86 = Environment.GetEnvironmentVariable("ProgramFiles(x86)");
+            if (string.IsNullOrWhiteSpace(programFilesX86))
+                programFilesX86 = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
+
+            var installDirs = new List<string>();
+            if (!string.IsNullOrWhiteSpace(programFilesX86))
+                installDirs.Add(Path.Combine(programFilesX86, "Overwolf"));
+
             try
             {
-                string baseDir = @"C:\Program Files (x86)\Overwolf";
-                if (Directory.Exists(baseDir))
+                using (var key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\WOW6432Node\Overwolf"))
                 {
-                    var exe = Directory.GetFiles(baseDir, "Overwolf.exe", SearchOption.AllDirectories)
+                    string? installPath = key?.GetValue("InstallPath") as string;
+                    if (!string.IsNullOrWhiteSpace(installPath))
+                        installDirs.Add(installPath);
+                }
+            }
+            catch { }
+
+            foreach (string installDir in installDirs.Distinct(StringComparer.OrdinalIgnoreCase))
+            {
+                if (File.Exists(installDir) &&
+                    string.Equals(Path.GetFileName(installDir), "Overwolf.exe", StringComparison.OrdinalIgnoreCase))
+                    return installDir;
+
+                try
+                {
+                    var exe = Directory.GetFiles(installDir, "Overwolf.exe", SearchOption.AllDirectories)
                         .Select(f => new FileInfo(f))
                         .OrderByDescending(f => f.LastWriteTime)
                         .FirstOrDefault();
                     if (exe != null) return exe.FullName;
                 }
+                catch { }
             }
-            catch { }
-            return @"C:\Program Files (x86)\Overwolf\Overwolf.exe";
+
+            string fallbackDir = string.IsNullOrWhiteSpace(programFilesX86)
+                ? @"C:\Program Files (x86)"
+                : programFilesX86;
+            return Path.Combine(fallbackDir, "Overwolf", "Overwolf.exe");
         }
 
         private static void StopOverwolfProcesses()
