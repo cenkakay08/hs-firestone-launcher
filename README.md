@@ -75,7 +75,7 @@ Hearthstone.exe starts
 ```
 
 - Uses `ManagementEventWatcher` with a WQL query — **no CPU polling**
-- Overwolf path is auto-discovered from `C:\Program Files (x86)\Overwolf\` (picks newest version)
+- Overwolf path is discovered from the 32-bit Program Files directory or the Overwolf registry install path (picks newest version)
 - Startup registry key: `HKCU\Software\Microsoft\Windows\CurrentVersion\Run` — **no admin rights needed**
 
 ---
@@ -99,14 +99,16 @@ git clone https://github.com/cenkakay08/hs-firestone-launcher.git
 cd hs-firestone-launcher
 
 # Requires .NET 8 SDK
-dotnet new winforms -n HsFirestoneLauncher -o HsFirestoneLauncher -f net8.0 --force
-copy Program.cs HsFirestoneLauncher\Program.cs
-cd HsFirestoneLauncher
-dotnet add package System.Management --version 7.0.0
-dotnet publish -c Release -r win-x64 --self-contained false -p:PublishSingleFile=true -o ../out
+dotnet publish HsFirestoneLauncher\HsFirestoneLauncher.csproj --configuration Release --runtime win-x64 --output out
 ```
 
 The output `out\HsFirestoneLauncher.exe` is your ready-to-run binary.
+
+---
+
+## 🧪 Download a Dev Build
+
+The **PR Checks** workflow uploads a Windows build artifact retained for 14 days for pull requests targeting `dev` and direct pushes to `dev`. For a pull request, open its **Checks** tab and follow the **PR Checks** run; download `HsFirestoneLauncher-dev-<commit>` from that run's **Artifacts** section.
 
 ---
 

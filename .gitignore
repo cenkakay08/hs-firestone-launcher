@@ -1,3 +1,5 @@
 # Ignore compiled binaries
 *.exe
 bin/
+obj/
+out/
