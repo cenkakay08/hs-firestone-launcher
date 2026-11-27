@@ -24,6 +24,7 @@ jobs:
             dotnet new winforms -n $proj -o $proj -f net8.0 --force
           }
           Copy-Item -Force Program.cs "$proj/Program.cs"
+          Copy-Item -Force LangData.cs "$proj/LangData.cs"
           # Patch the .csproj to ensure WinForms + correct namespace
           $csproj = "$proj/$proj.csproj"
           $xml = [xml](Get-Content $csproj)
@@ -41,6 +42,13 @@ jobs:
             $pg.AppendChild($el) | Out-Null
           }
           $xml.Save((Resolve-Path $csproj))
+
+      - name: Run unit tests
+        shell: pwsh
+        run: |
+          dotnet test HsFirestoneLauncher.Tests `
+            --configuration Release `
+            --logger "console;verbosity=normal"
 
       - name: Add NuGet packages
         shell: pwsh
