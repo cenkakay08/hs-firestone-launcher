@@ -58,6 +58,24 @@ jobs:
             -p:IncludeNativeLibrariesForSelfExtract=true `
             -o ../out
 
+      # ── Code Signing via SSL.com eSigner ────────────────────────────────────
+      # Requires these GitHub Secrets to be set in repo settings:
+      #   SSLCOM_USERNAME   → your SSL.com account e-mail
+      #   SSLCOM_PASSWORD   → your SSL.com account password
+      #   SSLCOM_TOTP_SECRET → TOTP secret from SSL.com 2FA setup
+      #   SSLCOM_CREDENTIAL_ID → Certificate credential ID from SSL.com dashboard
+      - name: Sign executable with SSL.com eSigner
+        uses: sslcom/esigner-codesign@develop
+        with:
+          command: sign
+          username: ${{ secrets.SSLCOM_USERNAME }}
+          password: ${{ secrets.SSLCOM_PASSWORD }}
+          credential_id: ${{ secrets.SSLCOM_CREDENTIAL_ID }}
+          totp_secret: ${{ secrets.SSLCOM_TOTP_SECRET }}
+          file_path: out/HsFirestoneLauncher.exe
+          malware_block: false
+          environment_name: PROD
+
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:

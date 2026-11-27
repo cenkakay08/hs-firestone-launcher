@@ -51,6 +51,19 @@ No more leaving Overwolf running in the background eating RAM and CPU after you 
 - Windows 10 / Windows 11
 - [Hearthstone](https://hearthstone.blizzard.com/)
 - [Overwolf](https://www.overwolf.com/) & [Firestone](https://www.firestoneapp.com/)
+- **.NET 8 Desktop Runtime** (required since the exe is not self-contained): [Download here](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
+
+---
+
+## Windows SmartScreen Warning
+
+When you first run the `.exe`, Windows may show a **"Windows protected your PC"** dialog because the app is code-signed via [SSL.com eSigner](https://www.ssl.com/esigner/). This is a one-time prompt while the app builds download reputation.
+
+**To run it safely:**
+1. Click **"More info"** in the SmartScreen dialog
+2. Click **"Run anyway"**
+
+The binary is built transparently via GitHub Actions — you can inspect the full build workflow in [`.github/workflows/release.yml`](.github/workflows/release.yml).
 
 ---
 
