@@ -1,6 +1,9 @@
 name: PR Checks
 
 on:
+  push:
+    branches:
+      - dev
   pull_request:
     branches:
       - dev
@@ -34,6 +37,15 @@ jobs:
 
       - name: Publish release executable
         run: dotnet publish HsFirestoneLauncher/HsFirestoneLauncher.csproj --configuration Release --runtime win-x64 --output out
+
+      - name: Upload dev build artifact
+        if: github.event_name == 'push' && github.ref == 'refs/heads/dev'
+        uses: actions/upload-artifact@v4
+        with:
+          name: HsFirestoneLauncher-dev-${{ github.sha }}
+          path: out/HsFirestoneLauncher.exe
+          if-no-files-found: error
+          retention-days: 14
 
   auto-approve:
     name: auto-approve
