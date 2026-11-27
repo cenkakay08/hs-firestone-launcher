@@ -1,80 +1,117 @@
-# hs-firestone-launcher
+# HS-Firestone Launcher
 
-**Automatic Hearthstone, Overwolf & Firestone Launcher and Closer for Windows System Tray**
+> **Automatic Overwolf & Firestone manager for Hearthstone on Windows** — zero config, lives in your system tray.
 
-`hs-firestone-launcher` is a lightweight, zero-dependency Windows system tray utility that automatically launches **Overwolf / Firestone** when **Hearthstone** starts, and cleanly terminates all Overwolf background processes the moment Hearthstone exits.
+[![Build & Release](https://github.com/cenkakay08/hs-firestone-launcher/actions/workflows/release.yml/badge.svg)](https://github.com/cenkakay08/hs-firestone-launcher/actions/workflows/release.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Platform](https://img.shields.io/badge/platform-Windows%2010%2F11-informational)](https://github.com/cenkakay08/hs-firestone-launcher/releases/latest)
+[![Latest Release](https://img.shields.io/github/v/release/cenkakay08/hs-firestone-launcher)](https://github.com/cenkakay08/hs-firestone-launcher/releases/latest)
 
-No more leaving Overwolf running in the background eating RAM and CPU after you finish playing Hearthstone.
-
----
-
-## Key Features
-
-- **Automatic Launch**: Detects when `Hearthstone.exe` starts and automatically launches Overwolf (and Firestone) with a 15-second startup cooldown.
-- **Instant Shutdown Detection**: Uses Windows `Process.Exited` events to immediately terminate `Overwolf`, `OverwolfBrowser`, and `OverwolfHelper` as soon as Hearthstone closes.
-- **Modern System Tray Flyout**:
-  - **High-DPI 64×64 Tray Icon** with a top-right status dot (**Green** = Active, **Gray** = Paused).
-  - **Left or Right-click** the tray icon to open the rounded, borderless flyout menu (auto-hides when clicking outside).
-  - **iOS-Style Toggle Switches** for **Auto-Sync** and **Run at Windows Startup**.
-  - **Dark & Light Mode**: Switch themes anytime via the top-right Sun/Moon icon.
-- **12 Languages Built-In**: Automatically matches your Windows system language (defaults to English if unmatched), with a language selector for:
-  `English`, `Türkçe`, `Deutsch`, `Français`, `Español`, `Italiano`, `Português`, `Русский`, `Polski`, `日本語`, `한국어`, `中文`.
-- **Run at Windows Startup**: Built-in toggle to enable or disable automatic startup with Windows (`HKCU\\...\\Run`, no admin rights required).
-- **Single-Instance Protection**: Uses a named `Mutex` so duplicate instances cannot run simultaneously.
-- **Zero Dependencies**: Built with native Windows .NET, no external SDKs or installers needed.
+**HS-Firestone Launcher** is a lightweight Windows system tray utility that automatically launches **Overwolf** and **Firestone** the moment **Hearthstone** starts, and cleanly kills all Overwolf background processes the moment Hearthstone exits — no manual intervention, no leftover RAM or CPU usage.
 
 ---
 
-## Installation & Usage
+## ✨ Features
 
-1. **Download or Clone** this repository:
-   ```bash
-   git clone https://github.com/cenkakay08/hs-firestone-launcher.git
-   ```
-2. **Run the Launcher**:
-   - Navigate to the repository folder and double‑click `HS-Firestone-Launcher.exe`.
-   - The application runs silently in the background with a system‑tray icon.
-3. **Control from System Tray**:
-   - Click the Hearthstone/Firestone icon in the bottom‑right Windows system tray to:
-     - Toggle **Auto‑Sync** ON/OFF
-     - Toggle **Run at Windows Startup** ON/OFF
-     - Switch between **Dark / Light Mode**
-     - Change **Language**
-     - **Quit** the application
+| Feature | Detail |
+|---|---|
+| 🚀 **Auto-Launch** | Detects `Hearthstone.exe` via WMI event watcher and starts Overwolf instantly |
+| ⚡ **Instant Cleanup** | Kills `Overwolf`, `OverwolfBrowser`, `OverwolfHelper` the moment Hearthstone exits |
+| 🔔 **System Tray Flyout** | Borderless, rounded flyout — click tray icon to open/close |
+| 🌗 **Dark & Light Mode** | Toggle anytime with the Sun/Moon button |
+| 🌍 **12 Languages** | Auto-detects Windows system language; manually switchable |
+| 🔁 **Run at Startup** | One-click Windows startup toggle (no admin rights required) |
+| 🛡️ **Single Instance** | Named `Mutex` prevents duplicate processes |
+| 📦 **No Installer** | Single `.exe`, no setup wizard, no registry bloat |
 
-> **Note:** The legacy `Baslat.vbs` and `HearthstoneMonitor.ps1` scripts have been removed. The launcher is now a compiled `.exe` and does not require PowerShell.
+### Supported Languages
+`English` · `Türkçe` · `Deutsch` · `Français` · `Español` · `Italiano` · `Português` · `Русский` · `Polski` · `日本語` · `한국어` · `中文`
 
 ---
 
-## Requirements
+## 📥 Download & Install
 
-- Windows 10 / Windows 11
-- [Hearthstone](https://hearthstone.blizzard.com/)
-- [Overwolf](https://www.overwolf.com/) & [Firestone](https://www.firestoneapp.com/)
-- **.NET 8 Desktop Runtime** (required since the exe is not self-contained): [Download here](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
+1. Go to [**Releases**](https://github.com/cenkakay08/hs-firestone-launcher/releases/latest) and download `HsFirestoneLauncher.exe`
+2. Place it anywhere (e.g. `C:\Tools\`)
+3. Double-click to run — it goes straight to the system tray
 
----
-
-## Windows SmartScreen Warning
-
-When you first run the `.exe`, Windows may show a **"Windows protected your PC"** dialog because the app is code-signed via [SSL.com eSigner](https://www.ssl.com/esigner/). This is a one-time prompt while the app builds download reputation.
-
-**To run it safely:**
-1. Click **"More info"** in the SmartScreen dialog
-2. Click **"Run anyway"**
-
-The binary is built transparently via GitHub Actions — you can inspect the full build workflow in [`.github/workflows/release.yml`](.github/workflows/release.yml).
+> **Requirements:** Windows 10 / 11 · [.NET 8 Desktop Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) · [Hearthstone](https://hearthstone.blizzard.com/) · [Overwolf](https://www.overwolf.com/) + [Firestone](https://www.firestoneapp.gg/)
 
 ---
 
-## How It Works
+## 🖥️ Usage
 
-- The launcher uses a `ManagementEventWatcher` to monitor process start events for `Hearthstone.exe` (event‑driven, no admin rights needed).
-- Once Hearthstone starts, the launcher launches Overwolf and Firestone after a short cooldown.
-- `Process.Exited` events are attached to the Hearthstone process for instant cleanup of Overwolf components when Hearthstone exits.
+| Action | How |
+|---|---|
+| Open settings flyout | Left or right-click the tray icon |
+| Toggle auto-sync | Flip the **Auto-Sync** switch in the flyout |
+| Toggle Windows startup | Flip the **Run at Startup** switch |
+| Switch dark / light mode | Click the ☀️/🌙 button (top-right of flyout) |
+| Change language | Click the 🌐 globe button (bottom-left of flyout) |
+| Quit | Click **Quit** in the flyout |
 
 ---
 
-## License
+## ⚙️ How It Works
 
-MIT
+```
+Hearthstone.exe starts
+        │
+        ▼
+  WMI EventWatcher fires (no polling, event-driven)
+        │
+        ▼
+  Overwolf.exe launched (15s cooldown prevents double-launch)
+        │
+        ▼
+  Process.Exited hook attached to Hearthstone
+        │
+        ▼
+  Hearthstone closes → Overwolf + OverwolfBrowser + OverwolfHelper killed
+```
+
+- Uses `ManagementEventWatcher` with a WQL query — **no CPU polling**
+- Overwolf path is auto-discovered from `C:\Program Files (x86)\Overwolf\` (picks newest version)
+- Startup registry key: `HKCU\Software\Microsoft\Windows\CurrentVersion\Run` — **no admin rights needed**
+
+---
+
+## 🔒 Security & SmartScreen
+
+Builds are fully automated via [GitHub Actions](.github/workflows/release.yml) — no manual steps, no unsigned binaries injected. You can audit every build step in the workflow file.
+
+**If Windows shows "Windows protected your PC":**
+1. Click **More info**
+2. Click **Run anyway**
+
+This prompt appears because the app does not yet have an EV code-signing certificate (pending SSL.com open-source program approval). The source code and build pipeline are fully public.
+
+---
+
+## 🏗️ Build from Source
+
+```bash
+git clone https://github.com/cenkakay08/hs-firestone-launcher.git
+cd hs-firestone-launcher
+
+# Requires .NET 8 SDK
+dotnet new winforms -n HsFirestoneLauncher -o HsFirestoneLauncher -f net8.0 --force
+copy Program.cs HsFirestoneLauncher\Program.cs
+cd HsFirestoneLauncher
+dotnet add package System.Management --version 7.0.0
+dotnet publish -c Release -r win-x64 --self-contained false -p:PublishSingleFile=true -o ../out
+```
+
+The output `out\HsFirestoneLauncher.exe` is your ready-to-run binary.
+
+---
+
+## 🤝 Contributing
+
+Pull requests are welcome! Please branch off `dev` and open a PR targeting `dev`.
+
+---
+
+## 📄 License
+
+[MIT](LICENSE) © 2026 cenkakay08
