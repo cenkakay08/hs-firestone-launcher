@@ -81,10 +81,22 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
+      contents: write
+      actions: write
     steps:
-      - name: Auto-approve PR
+      - name: Auto-approve and merge PR
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_URL: ${{ github.event.pull_request.html_url }}
+          HEAD_REF: ${{ github.event.pull_request.head.ref }}
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
         run: |
           gh pr review "$PR_URL" --approve --body "Auto-approved: unit tests and release build passed, and author is @cenkakay08."
+          if [ "$HEAD_REF" != "dev" ] && [ "$HEAD_REF" != "main" ]; then
+            gh pr merge "$PR_URL" --merge --delete-branch
+          else
+            gh pr merge "$PR_URL" --merge
+          fi
+          if [ "$BASE_REF" = "main" ]; then
+            gh workflow run release.yml --ref main
+          fi
