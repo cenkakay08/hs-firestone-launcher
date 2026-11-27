@@ -108,7 +108,7 @@ The output `out\HsFirestoneLauncher.exe` is your ready-to-run binary.
 
 ## 🧪 Download a Dev Build
 
-When changes are pushed to `dev`, the **PR Checks** workflow uploads a Windows build artifact retained for 14 days. Open the latest **PR Checks** run for the `dev` branch under **Actions**, then download the artifact named `HsFirestoneLauncher-dev-<commit>`.
+The **PR Checks** workflow uploads a Windows build artifact retained for 14 days for pull requests targeting `dev` and direct pushes to `dev`. For a pull request, open its **Checks** tab and follow the **PR Checks** run; download `HsFirestoneLauncher-dev-<commit>` from that run's **Artifacts** section.
 
 ---
 
