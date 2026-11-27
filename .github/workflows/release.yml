@@ -12,10 +12,10 @@ jobs:
       - uses: actions/checkout@v4
       - name: Ensure .csproj exists
         run: |
-          if not exist "HsFirestoneLauncher.csproj" (
-            dotnet new console -n HsFirestoneLauncher -o . -f net6.0 --force
-          )
-          copy /Y Program.cs .
+            if (-Not (Test-Path "HsFirestoneLauncher.csproj")) {
+              dotnet new console -n HsFirestoneLauncher -o . -f net6.0 --force
+            }
+            Copy-Item -Force Program.cs .
       - name: Add System.Management reference
         run: dotnet add package System.Management --version 7.0.0
       - name: Build the executable
