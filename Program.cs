@@ -105,7 +105,6 @@ namespace HsFirestoneLauncher
 
         public TrayAppContext()
         {
-            RepairLegacyStartupEntry();
             _overwolfExe = FindOverwolfExe();
 
             _strings   = Languages.All;
@@ -345,21 +344,6 @@ namespace HsFirestoneLauncher
         private static string GetStartupExecutablePath()
         {
             return Environment.ProcessPath ?? Application.ExecutablePath;
-        }
-
-        private static void RepairLegacyStartupEntry()
-        {
-            using (var key = Registry.CurrentUser.OpenSubKey(RunKeyPath, true))
-            {
-                if (key == null) return;
-                var value = key.GetValue(RunValueName);
-                if (value is string registryValue &&
-                    (!StartupRegistration.MatchesExecutable(registryValue, GetStartupExecutablePath()) ||
-                     StartupRegistration.IsLegacyScriptCommand(registryValue)))
-                {
-                    key.SetValue(RunValueName, StartupRegistration.BuildCommand(GetStartupExecutablePath()));
-                }
-            }
         }
 
         private void ShowTrayFlyout()
