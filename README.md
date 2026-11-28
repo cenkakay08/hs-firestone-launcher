@@ -90,6 +90,13 @@ Builds are fully automated via [GitHub Actions](.github/workflows/release.yml) �
 
 This prompt appears because the app does not yet have an EV code-signing certificate (pending SSL.com open-source program approval). The source code and build pipeline are fully public.
 
+### Windows Startup
+
+When the app launches automatically at Windows startup, the same warning may appear.
+
+Follow the steps above to run the app.
+The app starts via the `HKCU\Software\Microsoft\Windows\CurrentVersion\Run` registry key, so no administrator rights are required.
+
 ---
 
 ## 🏗️ Build from Source
@@ -121,3 +128,4 @@ Pull requests are welcome! Please branch off `dev` and open a PR targeting `dev`
 ## 📄 License
 
 [MIT](LICENSE) © 2026 cenkakay08
+
