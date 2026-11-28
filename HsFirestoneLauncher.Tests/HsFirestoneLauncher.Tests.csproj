@@ -18,6 +18,7 @@
   <!-- LangData.cs'i doğrudan dahil et — WinForms bağımlılığı olmadan -->
   <ItemGroup>
     <Compile Include="../LangData.cs" />
+    <Compile Include="../StartupRegistration.cs" />
   </ItemGroup>
 
 </Project>
