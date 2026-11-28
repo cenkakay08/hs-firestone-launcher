@@ -18,6 +18,7 @@
   <ItemGroup>
     <Compile Include="..\Program.cs" Link="Program.cs" />
     <Compile Include="..\LangData.cs" Link="LangData.cs" />
+    <Compile Include="..\StartupRegistration.cs" Link="StartupRegistration.cs" />
   </ItemGroup>
 
 </Project>

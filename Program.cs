@@ -105,6 +105,7 @@ namespace HsFirestoneLauncher
 
         public TrayAppContext()
         {
+            RepairLegacyStartupEntry();
             _overwolfExe = FindOverwolfExe();
 
             _strings   = Languages.All;
@@ -325,8 +326,10 @@ namespace HsFirestoneLauncher
 
         private static bool IsStartupEnabled()
         {
+            string executablePath = GetStartupExecutablePath();
             using (var key = Registry.CurrentUser.OpenSubKey(RunKeyPath, false))
-                return key != null && key.GetValue(RunValueName) != null;
+                return key?.GetValue(RunValueName) is string value &&
+                    StartupRegistration.MatchesExecutable(value, executablePath);
         }
 
         private static void SetStartupEnabled(bool enabled)
@@ -334,8 +337,27 @@ namespace HsFirestoneLauncher
             using (var key = Registry.CurrentUser.OpenSubKey(RunKeyPath, true))
             {
                 if (key == null) return;
-                if (enabled) key.SetValue(RunValueName, "\"" + Application.ExecutablePath + "\"");
+                if (enabled) key.SetValue(RunValueName, StartupRegistration.BuildCommand(GetStartupExecutablePath()));
                 else key.DeleteValue(RunValueName, false);
+            }
+        }
+
+        private static string GetStartupExecutablePath()
+        {
+            return Environment.ProcessPath ?? Application.ExecutablePath;
+        }
+
+        private static void RepairLegacyStartupEntry()
+        {
+            using (var key = Registry.CurrentUser.OpenSubKey(RunKeyPath, true))
+            {
+                if (key == null) return;
+                var value = key.GetValue(RunValueName);
+                if (value is string registryValue &&
+                    !StartupRegistration.MatchesExecutable(registryValue, GetStartupExecutablePath()))
+                {
+                    key.SetValue(RunValueName, StartupRegistration.BuildCommand(GetStartupExecutablePath()));
+                }
             }
         }
 
