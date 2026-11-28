@@ -30,15 +30,5 @@ namespace HsFirestoneLauncher
 
             return string.Equals(command, expected, StringComparison.OrdinalIgnoreCase);
         }
-
-        public static bool IsLegacyScriptCommand(string? registryValue)
-        {
-            if (string.IsNullOrWhiteSpace(registryValue))
-                return false;
-
-            return registryValue.IndexOf(".vbs", StringComparison.OrdinalIgnoreCase) >= 0 ||
-                   registryValue.IndexOf("wscript.exe", StringComparison.OrdinalIgnoreCase) >= 0 ||
-                   registryValue.IndexOf("cscript.exe", StringComparison.OrdinalIgnoreCase) >= 0;
-        }
     }
 }
