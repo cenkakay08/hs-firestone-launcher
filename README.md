@@ -77,6 +77,7 @@ Hearthstone.exe starts
 - Uses `ManagementEventWatcher` with a WQL query — **no CPU polling**
 - Overwolf path is discovered from the 32-bit Program Files directory or the Overwolf registry install path (picks newest version)
 - Startup registry key: `HKCU\Software\Microsoft\Windows\CurrentVersion\Run` — **no admin rights needed**
+- Legacy WScript/VBS startup commands are automatically replaced with the current launcher executable path
 
 ---
 

@@ -21,8 +21,17 @@ namespace HsFirestoneLauncher.Tests
         [Fact]
         public void MatchesExecutable_RejectsLegacyVbsCommand()
         {
-            string value = "\"C:\\WINDOWS\\System32\\wscript.exe\" \"C:\\Users\\Cenk\\Baslat.vbs\"";
+            string value = "\"C:\\WINDOWS\\System32\\wscript.exe\" \"C:\\Users\\AnyUser\\Baslat.vbs\"";
             Assert.False(StartupRegistration.MatchesExecutable(value, @"C:\Apps\HS Launcher.exe"));
+        }
+
+        [Theory]
+        [InlineData("\"C:\\WINDOWS\\System32\\wscript.exe\" \"C:\\Users\\AnyUser\\Baslat.vbs\"")]
+        [InlineData("\"C:\\WINDOWS\\System32\\cscript.exe\" \"C:\\Apps\\Baslat.vbs\"")]
+        [InlineData("C:\\Users\\AnyUser\\Baslat.vbs")]
+        public void IsLegacyScriptCommand_DetectsScriptBasedStartup(string value)
+        {
+            Assert.True(StartupRegistration.IsLegacyScriptCommand(value));
         }
     }
 }

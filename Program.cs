@@ -354,7 +354,8 @@ namespace HsFirestoneLauncher
                 if (key == null) return;
                 var value = key.GetValue(RunValueName);
                 if (value is string registryValue &&
-                    !StartupRegistration.MatchesExecutable(registryValue, GetStartupExecutablePath()))
+                    (!StartupRegistration.MatchesExecutable(registryValue, GetStartupExecutablePath()) ||
+                     StartupRegistration.IsLegacyScriptCommand(registryValue)))
                 {
                     key.SetValue(RunValueName, StartupRegistration.BuildCommand(GetStartupExecutablePath()));
                 }
