@@ -325,8 +325,10 @@ namespace HsFirestoneLauncher
 
         private static bool IsStartupEnabled()
         {
+            string executablePath = GetStartupExecutablePath();
             using (var key = Registry.CurrentUser.OpenSubKey(RunKeyPath, false))
-                return key != null && key.GetValue(RunValueName) != null;
+                return key?.GetValue(RunValueName) is string value &&
+                    StartupRegistration.MatchesExecutable(value, executablePath);
         }
 
         private static void SetStartupEnabled(bool enabled)
@@ -334,9 +336,14 @@ namespace HsFirestoneLauncher
             using (var key = Registry.CurrentUser.OpenSubKey(RunKeyPath, true))
             {
                 if (key == null) return;
-                if (enabled) key.SetValue(RunValueName, "\"" + Application.ExecutablePath + "\"");
+                if (enabled) key.SetValue(RunValueName, StartupRegistration.BuildCommand(GetStartupExecutablePath()));
                 else key.DeleteValue(RunValueName, false);
             }
+        }
+
+        private static string GetStartupExecutablePath()
+        {
+            return Environment.ProcessPath ?? Application.ExecutablePath;
         }
 
         private void ShowTrayFlyout()
